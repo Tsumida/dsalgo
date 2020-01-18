@@ -21,7 +21,7 @@ class BinarySearchTree:
 
         def __str__(self):
             # 不要打印self.father, 因为它默认用前序遍历导致无限递归
-            return "({}, {}, {})".format(self.val, id(self.left.val), id(self.right.val))
+            return "({}, {}, {})".format(self.val, self.left.val, self.right.val)
 
     def __init__(self):
         self.root = None
@@ -102,39 +102,54 @@ class BinarySearchTree:
             self.__insert_node(BinarySearchTree.Node(val))
         return self
 
-    # 返回被删除的节点
+    def __transplant(self, u:Node, v:Node):
+        """
+        connect v with u.father and separate u from the bst.
+
+        :param u:
+        :param v:
+        :return:
+        """
+        assert u
+        if not u.father:
+            self.root = v
+        elif u == u.father.left:
+            u.father.left = v
+        else:
+            u.father.right = v
+        if v:
+            v.father = u.father
+        #  u is separated from the bst.
+
+
     def delete(self, val):
+        """
+        Return None if there is no such node, else return node deleted.
+        :param val:
+        :return:
+        """
         if not self.root:
             return None
         else:
             p = self.search(val)
-            if not p:
-                return p
-            else:
-                if not p.left and not p.right:# 没有孩子
-                    fa = p.father
-                    if not fa: # root
-                        self.root = None
-                    elif fa.left == p:
-                        fa.left = None
-                    else:
-                        fa.right = None
-                    return p
-                elif p.left and p.left:# 2个孩子
-
-                    return p
-                else: # 1个孩子q, q替代p的位置
-                    q = p.right
-                    if p.left:
-                        q = p.left
-                    fa = p.father
-                    if not fa:
-                        self.root = q
-                    elif fa.left == p:
-                        fa.left = q
-                    else:
-                        fa.right = q
-                    return p
+            if p:
+                if not p.left:
+                    self.__transplant(p, p.right)
+                elif not p.right:
+                    self.__transplant(p, p.left)
+                else:
+                    successor = self.find_min_node(p.right)
+                    assert successor # p.right != None
+                    if successor != p.right:
+                        assert not successor.left
+                        self.__transplant(successor, successor.right)
+                        successor.right = p.right
+                        successor.right.father = successor
+                    self.__transplant(p, successor)
+                    successor.left = p.left
+                    successor.left.father = successor
+                p.left, p.right, p.father = None, None, None
+            return p
     @staticmethod
     def make_tree(seq:List[int]):
         """
@@ -189,12 +204,6 @@ class BinarySearchTree:
             BinarySearchTree.find_min_node(r),
             BinarySearchTree.find_max_node(r)
         )
-
-
-
-
-    def __copy__(self):
-        pass
 
     def __eq__(self, other):
         def equal(node1:BinarySearchTree.Node, node2:BinarySearchTree.Node) -> bool:

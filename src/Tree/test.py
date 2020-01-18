@@ -12,13 +12,6 @@ class BSTTest(unittest.TestCase):
     def tearDown(self):
         print("-"*16 + "--Test done--" + "-"*16)
 
-    def is_bst(self, tree: BinarySearchTree):
-        seq = tree.inorder_seq()
-        if len(seq) == 0:
-            return True
-        else:
-            return any(seq[i] <= seq[i+1] for i in range(0, len(seq)-1))
-
     def test_make_tree(self):
         # normal.
         t1 = BinarySearchTree.make_tree(seq = [10, 5, 11])
@@ -70,7 +63,7 @@ class BSTTest(unittest.TestCase):
         p3 = t2.search(2)
         assert 1 == p3.left.val and \
                3 == p3.right.val
-        assert t2.root == p3.father, f"Error: t2.root={t2.root}, p3.father={p3.father}"
+        assert t2.root == p3.father
 
 
 
@@ -109,6 +102,9 @@ class BSTTest(unittest.TestCase):
         assert BinarySearchTree.make_tree(seq=[4, 2, 6, 1, 3, 5, 7]).is_bst()
         assert BinarySearchTree.make_tree(seq=[4, 2, 6, None, 3, 5, 7]).is_bst()
         assert BinarySearchTree.make_tree(seq=[4, 2, 6, 1, None, None, 7]).is_bst()
+        assert BinarySearchTree.make_tree(seq=[4,
+                                               None, 6,
+                                               None, None, None, 7]).is_bst()
 
     def test_insert(self):
         t1 = BinarySearchTree()
@@ -162,6 +158,25 @@ class BSTTest(unittest.TestCase):
         assert [1, 2, 4] == t4.inorder_seq()
 
         # delete 2 child
+        t5 = BinarySearchTree.make_tree(seq=[4, 2, 6, 1, 3, 5, 7])
+        assert 6 == t5.delete(6).val
+        assert t5 == BinarySearchTree.make_tree(seq=[4, 2, 7, 1, 3, 5])
+        assert 2 == t5.delete(2).val
+        assert t5 == BinarySearchTree.make_tree(seq=[4, 3, 7, 1, None, 5])
+        assert 4 == t5.delete(4).val
+        assert t5 == BinarySearchTree.make_tree(seq=[5, 3, 7, 1])
+        assert 5 == t5.delete(5).val
+        assert t5 == BinarySearchTree.make_tree(seq=[7, 3, None, 1])
+
+        # delete all
+        assert 1 == t5.delete(1).val
+        assert t5 == BinarySearchTree.make_tree(seq=[7, 3])
+        assert 3 == t5.delete(3).val
+        assert t5 == BinarySearchTree.make_tree(seq=[7])
+        assert 7 == t5.delete(7).val
+        assert t5 == BinarySearchTree()
+        assert not t5.delete(1)
+        assert t5 == BinarySearchTree()
 
 
 
