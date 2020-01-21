@@ -4,8 +4,8 @@ from typing import List
 
 class BinarySearchTree:
     class Node:
-        def __init__(self, val:int, left=None, right=None, father=None):
-            self.val = val
+        def __init__(self, key:int, left=None, right=None, father=None):
+            self.key = key
             self.left = left
             self.right = right
             self.father = father
@@ -21,7 +21,7 @@ class BinarySearchTree:
 
         def __str__(self):
             # 不要打印self.father, 因为它默认用前序遍历导致无限递归
-            return "({}, {}, {})".format(self.val, self.left.val, self.right.val)
+            return "({}, {}, {})".format(self.key, self.left.key, self.right.key)
 
     def __init__(self):
         self.root = None
@@ -30,20 +30,20 @@ class BinarySearchTree:
         def recur(r:BinarySearchTree.Node, lis:List[int]):
             if r:
                 recur(r.left, lis)
-                lis.append(r.val)
+                lis.append(r.key)
                 recur(r.right, lis)
 
         res = list()
         recur(self.root, res)
         return res
 
-    def search(self, val:int) -> Node:
+    def search(self, key:int) -> Node:
         # may return None
         p = self.root
         while p:
-            if p.val == val:
+            if p.key == key:
                 break
-            elif p.val <= val:
+            elif p.key <= key:
                 p = p.right
             else:
                 p = p.left
@@ -52,8 +52,8 @@ class BinarySearchTree:
     def is_bst(self) -> bool:
         # 语义: t是BST <=>
         #    (None, None) <=> t.root == None
-        # 或 (l, r) && l.val <= t.val <= r.val
-        # 递归判断 max(r.left).val <= r.val <= min(r.right).val
+        # 或 (l, r) && l.key <= t.key <= r.key
+        # 递归判断 max(r.left).key <= r.key <= min(r.right).key
         def recur(r:BinarySearchTree.Node):
             if not r:
                 return (None, None, True)
@@ -68,7 +68,7 @@ class BinarySearchTree:
                     r_min = r
                 if not r_max:
                     r_max = r_min
-                if lb & rb and l_max.val <= r.val and r.val <= r_min.val:
+                if lb & rb and l_max.key <= r.key and r.key <= r_min.key:
                     return (l_min, r_max, True)
                 else:
                     return (None, None, False)
@@ -81,25 +81,25 @@ class BinarySearchTree:
 
     def __insert_node(self, node:Node):
         p, q = self.root, self.root
-        val = node.val
+        key = node.key
         while p:
             q = p
-            if p.val <= val:
+            if p.key <= key:
                 p = p.right
             else:
                 p = p.left
         assert p == None and q
-        if q.val <= val:
+        if q.key <= key:
             q.right = node
         else:
             q.left = node
         node.father = q
 
-    def insert(self, val):
+    def insert(self, key):
         if not self.root:
-            self.root = BinarySearchTree.Node(val)
+            self.root = BinarySearchTree.Node(key)
         else:
-            self.__insert_node(BinarySearchTree.Node(val))
+            self.__insert_node(BinarySearchTree.Node(key))
         return self
 
     def __transplant(self, u:Node, v:Node):
@@ -122,16 +122,16 @@ class BinarySearchTree:
         #  u is separated from the bst.
 
 
-    def delete(self, val):
+    def delete(self, key):
         """
         Return None if there is no such node, else return node deleted.
-        :param val:
+        :param key:
         :return:
         """
         if not self.root:
             return None
         else:
-            p = self.search(val)
+            p = self.search(key)
             if p:
                 if not p.left:
                     self.__transplant(p, p.right)
@@ -159,9 +159,9 @@ class BinarySearchTree:
         """
         # seq[i].left = seq[2i+1], seq[i].right = seq[2i+2]
         # for i in range(n):
-        nodes = [BinarySearchTree.Node(val) if val != None
+        nodes = [BinarySearchTree.Node(key) if key != None
                                             else None
-                                            for val in seq ]
+                                            for key in seq ]
         n = len(nodes)
         tree = BinarySearchTree()
 
@@ -210,7 +210,7 @@ class BinarySearchTree:
             if not node1 and not node2:
                 return True
             elif node1 and node2:
-                return node1.val == node2.val and\
+                return node1.key == node2.key and\
                        equal(node1.left, node2.left) and\
                        equal(node1.right, node2.right)
             else:
