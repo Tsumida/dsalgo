@@ -303,10 +303,10 @@ class RedBlackTree:
         assert n >= 0 and\
                n == len(val_seq) and\
                n == len(color_seq)
-        if n == 0:
-            print("Empty seq.")
+        #if n == 0:
+        #    print("Empty seq.")
         tree = RedBlackTree()
-        leaf = tree.get_leaf()
+        leaf = tree.__nil
 
         nodes = [
             RedBlackTree.RBTNode(key_seq[i], val_seq[i], color_seq[i])
@@ -338,7 +338,6 @@ class RedBlackTree:
     def set_root(self, new_root:RBTNode):
         assert new_root
         self.__root = new_root
-        self.__root.color = RedBlackTree.RBTNode.COLOR_BLACK
         return self.__root
 
     def get_level(self, node:RBTNode) -> int:
@@ -380,6 +379,48 @@ class RedBlackTree:
     def is_leaf(self, node: RBTNode) -> bool:
         return self.__nil == node
 
+    def is_rbt(self) -> (bool, str):
+        def property_4(node:RedBlackTree.RBTNode):
+            if node != leaf:
+                if node.color == red and\
+                        (node.left.color == red or node.right.color == red):
+                    raise RBTException(node,
+                                       "red node has at least one red child.")
+                else:
+                    # may raise error
+                    property_4(node.left)
+                    property_4(node.right)
+
+        def property_5(node:RedBlackTree.RBTNode):
+            if node == leaf:
+                return 1
+            else:
+                l = property_5(node.left)
+                r = property_5(node.right)
+                if l != r:
+                    raise RBTException(node, f"different black height left={l}, right={r}")
+                if node.color == red:
+                    return l
+                else :
+                    return l + 1
+
+        root, leaf = self.__root, self.__nil
+        red, black = RedBlackTree.RBTNode.COLOR_RED, RedBlackTree.RBTNode.COLOR_BLACK
+        if root.color == red:
+            return False, "error: root is red."
+        if leaf.color == red:
+            return False, "error: leaf is red."
+        try:
+            # assert that root is black and leaf is black.
+            property_4(self.__root)
+            _ = property_5(self.__root)
+        except RBTException as e:
+            return False, str(e)
+
+        return True, ""
+
+
+
     # Return (key, val) for the first node with node.key == key.
     # Else return (key, None)
     def search(self, key):
@@ -413,6 +454,11 @@ class RedBlackTree:
         recur(self.__root, res)
         return res
 
+class RBTException(Exception):
+    def __init__(self, node:RedBlackTree.RBTNode, msg:str):
+        self.node = node
+        self.msg = msg
 
-
+    def __str__(self):
+        return "RBTException: node({})\nmsg={}".format(self.node, self.msg)
 
