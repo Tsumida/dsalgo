@@ -120,6 +120,13 @@ class TestRBT(unittest.TestCase):
         assert (2, "def") == t3.delete(2)
         assert t2.is_leaf(t2.get_root())
 
+        assert (4, "abc") == t3.delete(4)
+        assert (5, "rst") == t3.delete(5)
+        assert (6, "hji") == t3.delete(6)
+        assert (7, "uvw") == t3.delete(7)
+
+        assert (7, None) == t3.delete(7)
+
     def test_inorder_seq(self):
         assert [] == RedBlackTree().get_inorder_seq()
 
