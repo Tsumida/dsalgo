@@ -3,11 +3,6 @@
 import types
 from typing import List, Set, Iterable
 
-'''
-TODO:
-考虑更多细节，比如union(x, y)时三种情况
-完善测试
-'''
 class DisjointSet:
 
     def __init__(self, collect:iter):
@@ -33,12 +28,13 @@ class DisjointSet:
         self.__inner[x] = x
         return self
 
-    # set ele.resp = x.resp for all ele in y
+    # 将y子树简单合并到x所在的集合
     def union(self, x, y):
         # case 1: x == y
         # case 2: x.p.p ... = y
         # case 3: y.p.p ... = x
-        s_x, s_y = self.__inner[x], self.__inner[y]
+        s_x = self.find_resp(x)
+        s_y = self.find_resp(y)
         if s_x != s_y:
             self.__inner[y] = s_x
 
@@ -65,6 +61,9 @@ class DisjointSet:
         res.sort(key=lambda line: line[0])
         return res
 
+    def is_equivalent(self, x, y):
+        return self.find_resp(x) == self.find_resp(y)
+
     def contains(self, x):
         return x in self.__inner
 
@@ -80,6 +79,22 @@ class DisjointSet:
                 res.union(resp, ele)
 
         return res
+
+    def max_level(self) -> int:
+        vals = [val for val in self.__inner.values()]
+        levels = [0 for _ in range(len(vals))]
+        for i, x in enumerate(vals):
+            cnt = 1
+            p = self.__inner[x]
+            prev = x
+            while p != prev:
+                prev = p
+                p = self.__inner[prev]
+                cnt += 1
+            levels[i] = cnt
+
+        return max(levels)
+
 
 
 
