@@ -53,6 +53,11 @@ class TestDisjointSet(TestCase):
         ds1.union(3, 5)
         assert ds1.find_repr(5) == 1
 
+        ds2 = DisjointSet(c1)
+        ds2.union(1, 2).union(2, 3).union(3, 4).union(4, 5)
+        assert ds1.find_repr(3) == 1
+        assert ds1.find_repr(5) == 1
+
     def test_is_equivalent(self):
         c1 = self.__CASES["c1"]
         ds1 = DisjointSet(c1)

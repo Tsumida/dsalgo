@@ -34,7 +34,10 @@ class DisjointSet:
         if s_y != s_x:
             tmp = y
             p = s_y
-            while tmp != p: # for [[1], [2]], union(1, 2) --> False
+            # 同一个集合所有元素都是等价的
+            # 下面的循环将更新在y之上的所有节点
+            # 树中其他分支的更新将延迟到调用 find_repr(), union()
+            while tmp != p: # [[1], [2]], union(1, 2), 不进入循环
                 self.__inner[tmp] = s_x
                 tmp = p
                 p = self.__inner[tmp]
