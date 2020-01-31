@@ -11,7 +11,7 @@ class DisjointSet:
         for ele in collect:
             self.__inner[ele] = ele
 
-    def find_resp(self, x):
+    def find_repr(self, x):
         # O(log log n)
         p = self.__inner[x]
         prev = x
@@ -28,16 +28,17 @@ class DisjointSet:
         self.__inner[x] = x
         return self
 
-    # 将y子树简单合并到x所在的集合
     def union(self, x, y):
-        # case 1: x == y
-        # case 2: x.p.p ... = y
-        # case 3: y.p.p ... = x
-        s_x = self.find_resp(x)
-        s_y = self.find_resp(y)
-        if s_x != s_y:
+        s_x = self.find_repr(x)
+        s_y = self.__inner[y]
+        if s_y != s_x:
+            tmp = y
+            p = s_y
+            while tmp != p: # for [[1], [2]], union(1, 2) --> False
+                self.__inner[tmp] = s_x
+                tmp = p
+                p = self.__inner[tmp]
             self.__inner[y] = s_x
-
         return self
 
     def is_empty(self):
@@ -62,7 +63,7 @@ class DisjointSet:
         return res
 
     def is_equivalent(self, x, y):
-        return self.find_resp(x) == self.find_resp(y)
+        return self.find_repr(x) == self.find_repr(y)
 
     def contains(self, x):
         return x in self.__inner
@@ -80,9 +81,9 @@ class DisjointSet:
 
         return res
 
-    def max_level(self) -> int:
+    def get_levels(self):
         vals = [val for val in self.__inner.values()]
-        levels = [0 for _ in range(len(vals))]
+        levels = dict()
         for i, x in enumerate(vals):
             cnt = 1
             p = self.__inner[x]
@@ -91,9 +92,13 @@ class DisjointSet:
                 prev = p
                 p = self.__inner[prev]
                 cnt += 1
-            levels[i] = cnt
-
-        return max(levels)
+            if cnt not in levels:
+                levels[cnt] = 1
+            else:
+                levels[cnt] += 1
+        res = [(c, n) for c, n in levels.items()]
+        res.sort(key=lambda t: t[0])
+        return res
 
 
 

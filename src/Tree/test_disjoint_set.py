@@ -18,40 +18,40 @@ class TestDisjointSet(TestCase):
     def test_make_set(self):
         c1 = [1, 2, 3, 4, 5, 6, 7]
         ds1 = DisjointSet(c1)
-        assert all(ds1.find_resp(x) == x for x in c1)
+        assert all(ds1.find_repr(x) == x for x in c1)
 
         c2 = [2]
         ds2 = DisjointSet(c2)
         assert not ds2.is_empty()
-        assert ds2.find_resp(2) == 2
+        assert ds2.find_repr(2) == 2
 
         c3 = []
         assert DisjointSet(c3).is_empty()
 
-    def test_find_resp(self):
+    def test_find_repr(self):
         c1 = [1, 2, 3, 4, 5, 6, 7]
         ds1 = DisjointSet(c1)
         # [1, 2, 3, 4], [5], [6], [7]
         ds1.union(1, 2)\
             .union(1, 3)\
             .union(1, 4)
-        assert ds1.find_resp(2) == 1
-        assert ds1.find_resp(3) == 1
-        assert ds1.find_resp(4) == 1
+        assert ds1.find_repr(2) == 1, f"error: {ds1.get_sets()}"
+        assert ds1.find_repr(3) == 1
+        assert ds1.find_repr(4) == 1
 
         ds1.union(5, 1)
-        assert ds1.find_resp(1) == 5
+        assert ds1.find_repr(1) == 5
 
     def test_union(self):
         c1 = [1, 2, 3, 4, 5, 6, 7]
         ds1 = DisjointSet(c1)
         ds1.union(1, 2).union(1, 3)
 
-        assert ds1.find_resp(2) == 1
-        assert ds1.find_resp(3) == 1
+        assert ds1.find_repr(2) == 1
+        assert ds1.find_repr(3) == 1
 
         ds1.union(3, 5)
-        assert ds1.find_resp(5) == 1
+        assert ds1.find_repr(5) == 1
 
     def test_is_equivalent(self):
         c1 = self.__CASES["c1"]
@@ -100,18 +100,22 @@ class TestDisjointSet(TestCase):
             for a, b in random_seq:
                 ds.union(a, b)
 
-        n = 1600000
+
+
+        n = 640000
         random_key = list(set(randint(0, n) for _ in range(n)))
-        random_tup = [(choice(random_key), choice(random_key)) for _ in range(n)]
+        n = len(random_key)
+        random_tup = [(choice(random_key), choice(random_key)) for _ in range(n << 2)]
         ds = DisjointSet(random_key)
         print("-"*32)
 
         p2 = Profile()
         p2.runcall(test_union, ds=ds, random_seq=random_tup)
         p2.print_stats()
-        print("-"*32)
+        print("-"*32, "n = ", n)
 
-        print("max-level = ", ds.max_level())
+        for c, num in ds.get_levels():
+            print("level = {}, num = {:8}, per = {}".format(c, num, round(num / n, 4)))
 
 
 
