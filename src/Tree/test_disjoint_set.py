@@ -54,9 +54,22 @@ class TestDisjointSet(TestCase):
         assert ds1.find_repr(5) == 1
 
         ds2 = DisjointSet(c1)
-        ds2.union(1, 2).union(2, 3).union(3, 4).union(4, 5)
-        assert ds1.find_repr(3) == 1
-        assert ds1.find_repr(5) == 1
+        ds2.union(1, 2).union(2, 3).union(3, 4)
+        # [[1, 2, 3, 4], [5, 6, 7]]
+        assert ds2.find_repr(3) == 1
+        assert ds2.find_repr(4) == 1
+        ds2.union(5, 6).union(6, 7)
+        assert ds2.find_repr(6) == 5
+        assert ds2.find_repr(7) == 5
+
+        # ====================================
+        #    1       5                1
+        #  2 3 4   6   7  ---->  2 3 4 5 6 7
+        # ====================================
+        ds2.union(3, 6)
+        assert ds2.find_repr(5) == 1
+        assert ds2.find_repr(6) == 1
+        assert ds2.find_repr(7) == 1
 
     def test_is_equivalent(self):
         c1 = self.__CASES["c1"]
@@ -105,12 +118,10 @@ class TestDisjointSet(TestCase):
             for a, b in random_seq:
                 ds.union(a, b)
 
-
-
-        n = 640000
+        n = 64000
         random_key = list(set(randint(0, n) for _ in range(n)))
         n = len(random_key)
-        random_tup = [(choice(random_key), choice(random_key)) for _ in range(n << 2)]
+        random_tup = [(choice(random_key), choice(random_key)) for _ in range(n << 1)]
         ds = DisjointSet(random_key)
         print("-"*32)
 
@@ -119,9 +130,11 @@ class TestDisjointSet(TestCase):
         p2.print_stats()
         print("-"*32, "n = ", n)
 
-        for c, num in ds.get_levels():
+        levels = ds.get_levels()
+        for c, num in levels:
             print("level = {}, num = {:8}, per = {}".format(c, num, round(num / n, 4)))
 
+        print("Expected level: ", round(sum(c * num / n for c, num in levels), 4))
 
 
 

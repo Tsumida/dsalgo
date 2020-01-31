@@ -41,6 +41,7 @@ class DisjointSet:
                 self.__inner[tmp] = s_x
                 tmp = p
                 p = self.__inner[tmp]
+            self.__inner[p] = s_x # p此时为原y集合的代表元
             self.__inner[y] = s_x
         return self
 
