@@ -5,6 +5,8 @@ from typing import List, Tuple
 
 # err msg
 ERR_INVALID_STORAGE_TYPE = "Error, invalid storage type: {}"
+ERR_NODE_EXISTS = "Error, node {} exists."
+ERR_EDGE_EXISTS = "Error, edge{} exists."
 
 class GraphException(Exception):
     def __init__(self, msg:str):
@@ -47,7 +49,7 @@ class Graph:
     def from_edge_list(type, edges:List[Tuple]):
         return Graph().set_type(type).from_list(edges)
 
-class GraphABC(ABC):
+class GraphStorage(ABC):
 
     def __init__(self):
         pass
@@ -101,7 +103,7 @@ class GraphABC(ABC):
         pass
 
 
-class WeightedAdjLis(GraphABC):
+class WeightedAdjLis(GraphStorage):
     """
     带权的邻接表，不含多重边
     (u, v, w)表示 从u到v的带权有向边
@@ -136,7 +138,9 @@ class WeightedAdjLis(GraphABC):
         # O(E)
         # if u or v not in self.__adj, add new node.
         node = self.__adj.setdefault(u, list())
-        assert all(v != nod.v for nod in node), f"Error: edge({u}, {v}) exists."
+        if any(v == nod.v for nod in node):
+            raise GraphException(ERR_EDGE_EXISTS.format((u, v)))
+
         node.append(WeightedAdjLis.__Edge(v, w))
         if v not in self.__adj:
             self.add_node(v)
@@ -171,7 +175,8 @@ class WeightedAdjLis(GraphABC):
         return [(nod.v, nod.w) for nod in self.__adj.get(node, list())]
 
     def add_node(self, node):
-        assert node not in self.__adj, f"Error: node{node} exists."
+        if node in self.__adj:
+            raise GraphException(ERR_NODE_EXISTS.format(node))
         self.__adj[node] = list()
         return self
 
@@ -197,7 +202,6 @@ class WeightedAdjLis(GraphABC):
                     nod.w = new_weight
                     break
         return self
-
 
     def contains_node(self, node):
         return node in self.__adj

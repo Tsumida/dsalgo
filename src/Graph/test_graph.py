@@ -2,7 +2,7 @@
 
 from unittest import TestCase
 
-from src.Graph.graph import WeightedAdjLis, Graph
+from src.Graph.graph import WeightedAdjLis, Graph, GraphException
 
 CASES = {
         "tree": [
@@ -46,7 +46,6 @@ class TestGraph(TestCase):
 
 
 class TestWeightedAdjLis(TestCase):
-    
 
     def test_add_node(self):
         g1 = WeightedAdjLis()
@@ -61,7 +60,7 @@ class TestWeightedAdjLis(TestCase):
         try:
             g1.add_node(2)
             raise Exception("Test should panic.")
-        except AssertionError:
+        except GraphException:
             pass
 
 
@@ -78,7 +77,7 @@ class TestWeightedAdjLis(TestCase):
         try:
             g1.add_edge(1, 2, 1)
             raise Exception("Test should panic.")
-        except AssertionError:
+        except GraphException:
             pass
 
     def test_get_neighbour(self):
