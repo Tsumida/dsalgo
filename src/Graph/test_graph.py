@@ -2,13 +2,9 @@
 
 from unittest import TestCase
 
-from src.Graph.graph import WeightedAdjLis
+from src.Graph.graph import WeightedAdjLis, Graph
 
-class TestGraph(TestCase):
-    pass
-
-class TestWeightedAdjLis(TestCase):
-    __CASE = {
+CASES = {
         "tree": [
             (1, 2, 1), (2, 3, 1), (3, 4, 1), (3, 5, 1), (3, 6, 1),
         ],
@@ -32,6 +28,25 @@ class TestWeightedAdjLis(TestCase):
             (4, 1, 1), (4, 2, 1), (4, 3, 1),
         ],
     }
+class TestGraph(TestCase):
+    
+    def test_usage(self):
+        lis = CASES["tree"]
+        _ = Graph()\
+            .set_type(Graph.PHY_ADJ_LIS)\
+            .from_list(lis)
+
+        _ = Graph.from_edge_list(Graph.PHY_ADJ_LIS, lis)
+
+    def test_graph_storage(self):
+        lis = CASES["tree"]
+        g = Graph.from_edge_list(Graph.PHY_ADJ_LIS, lis)
+        sto = g.get_storage()
+        assert isinstance(sto, WeightedAdjLis)
+
+
+class TestWeightedAdjLis(TestCase):
+    
 
     def test_add_node(self):
         g1 = WeightedAdjLis()
@@ -84,7 +99,7 @@ class TestWeightedAdjLis(TestCase):
         assert [] == g.get_neighbours(666)
 
     def test_get_edge(self):
-        for label, lis in self.__CASE.items():
+        for label, lis in CASES.items():
             g = WeightedAdjLis.from_edge_list(lis)
             for u, v, w in lis:
                 p = g.get_edge(u, v)
@@ -92,7 +107,7 @@ class TestWeightedAdjLis(TestCase):
                     f"error, test case: {label}. expected ({u}, {v}, {w}), got {p}"
 
     def test_delete_node(self):
-        g1 = WeightedAdjLis.from_edge_list(self.__CASE["circle"])
+        g1 = WeightedAdjLis.from_edge_list(CASES["circle"])
         assert g1.get_num_node() == 5
         assert g1.get_num_edge() == 5
 
@@ -130,7 +145,7 @@ class TestWeightedAdjLis(TestCase):
         ],
         :return:
         """
-        g = WeightedAdjLis.from_edge_list(self.__CASE["4-complete"])
+        g = WeightedAdjLis.from_edge_list(CASES["4-complete"])
         assert g.del_edge(1, 2) == (1, 2, 1)
         assert g.del_edge(2, 1) == (2, 1, 1)
         assert g.get_num_edge() == 10, f"error: {g.get_num_edge()}"
@@ -139,7 +154,7 @@ class TestWeightedAdjLis(TestCase):
 
 
     def test_from_lis(self):
-        for label, lis in self.__CASE.items():
+        for label, lis in CASES.items():
             node_set = set()
             for u, v, _ in lis:
                 node_set.add(u)
@@ -156,7 +171,7 @@ class TestWeightedAdjLis(TestCase):
                 assert (u, v, w) == g.get_edge(u, v)
 
     def test_set_weight(self):
-        g = WeightedAdjLis.from_edge_list(self.__CASE["4-complete"])
+        g = WeightedAdjLis.from_edge_list(CASES["4-complete"])
 
         assert (2, 1, 1) == g.get_edge(2, 1)
         assert (1, 2, 1) == g.get_edge(1, 2)
