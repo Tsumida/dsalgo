@@ -2,7 +2,9 @@
 
 from unittest import TestCase
 
-from src.Graph.graph import WeightedAdjLis, Graph, GraphException, AdjMat, PHY_MAT, PHY_ADJ_LIS
+from src.Graph.graph import Graph, PHY_MAT, PHY_ADJ_LIS
+from src.Graph.weighted_adj_lis import WeightedAdjLis
+from src.Graph.adj_mat import AdjMat
 
 GRAPH_CASES = {
         "nil":[],

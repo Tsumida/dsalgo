@@ -1,7 +1,5 @@
 # 2020-02-03
-from unittest import TestCase
 from src.Graph.graph import *
-from src.Graph.test_graph import GRAPH_CASES
 
 class GraphAlgo:
     def __init__(self):
@@ -14,13 +12,32 @@ class GraphAlgo:
         pass
 
     def is_acyclic(self, graph: Graph) -> bool:
-        def dfs(node):
-            pass
+        def dfs(u):
+            nonlocal cyclic_flag
+            color[u] = GRAY
+            neighbours = sto.get_neighbours(u)
+            for nod, _ in neighbours:
+                c = color[nod]
+                if c == WHITE:
+                    dfs(nod)
+                elif c == GRAY or cyclic_flag:
+                    cyclic_flag = True
+                    break
+            color[u] = BLACK  # 所有经过的点都会变为黑色
 
-
+        WHITE, GRAY, BLACK = 0, 1, 2 # unvisited, visiting, visited
         sto = graph.get_storage()
-        is_visited = set()
+        nodes = sto.nodes()
+        color = dict()
+        for u in nodes:
+            color[u] = WHITE
 
+        cyclic_flag = False
+        for node in nodes:
+            if color[node] == WHITE and not cyclic_flag:
+                dfs(node)
+
+        return not cyclic_flag
 
     def is_connected(self, graph: Graph) -> bool:
         return False
@@ -28,17 +45,8 @@ class GraphAlgo:
     def topological_sort(self, graph: Graph) -> bool:
         pass
 
-class TestGraphAlgo(TestCase):
-    def test_is_acyclic(self):
-        def test_case(label:str, case):
-            algo = GraphAlgo()
-            g_lis = Graph.make(type=PHY_ADJ_LIS, edges=case)
-            g_mat = Graph.make(type=PHY_MAT, edges=case)
-            assert algo.is_acyclic(g_lis), f"fail, label:{label}"
-            assert algo.is_acyclic(g_mat), f"fail, label:{label}"
 
-        for label, case in GRAPH_CASES.items():
-            test_case(label, case)
+
 
 
 
