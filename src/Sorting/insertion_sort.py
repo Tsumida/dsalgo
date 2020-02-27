@@ -1,4 +1,4 @@
-def insertion_sort(arr:list, reverse=False):
+def insertion_sort(arr: list, reverse=False):
     n = len(arr)
     if n <= 1:
         return
@@ -19,7 +19,7 @@ def insertion_sort(arr:list, reverse=False):
             index = -1
             ele = arr[i]
             for j in range(0, i):
-                if ele < arr[j]: # all in [0, j) <= ele
+                if ele < arr[j]:  # all in [0, j) <= ele
                     index = j
                     break
             if index != -1:
@@ -27,9 +27,8 @@ def insertion_sort(arr:list, reverse=False):
                 arr[index] = ele
 
 
-
 # [start, end) --> (start, end]
-def move(arr:list, start:int, end:int):
+def move(arr: list, start: int, end: int):
     assert start >= 0 and end < len(arr)
     tmp = arr[end]
     for i in range(end, start, -1):
@@ -39,7 +38,7 @@ def move(arr:list, start:int, end:int):
 
 def test_move():
     case1 = [0, 1, 2, 3, 4, 5]
-    st, end = 1, 4 # [1, 4)
+    st, end = 1, 4  # [1, 4)
     assert 4 == move(case1, st, end)
     assert case1 == [0, 1, 1, 2, 3, 5]
 
