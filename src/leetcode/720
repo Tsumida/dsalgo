@@ -1,0 +1,39 @@
+# 2019-11-8
+
+class Solution:
+    def longestWord(self, words: list) -> str:
+        res = ""
+        maxlen = 0
+        candidates = list()
+        table = set()
+        # 按照字典序排序， 则 a 必定在 ab前
+        words.sort()
+
+
+        for word in words:
+            # table.add(word) <=> (len(word) == 1) or (word[:-1] in table)
+            # 因为没有a, 所以 ab, abc, abcd 都不会放入candidate,
+            if len(word) == 1:
+                table.add(word)
+                candidates.append(word)
+                maxlen = max(maxlen, len(word))
+            else:
+                tmp = word[:-1]
+                if tmp in table:
+                    table.add(word) # maybe use
+                    candidates.append(word)
+                    maxlen = max(maxlen, len(word))
+
+
+        if len(candidates) > 0:
+            candidates = [word for word in table if len(word) == maxlen]
+            candidates.sort()
+            res = candidates[0]
+
+
+        return res
+
+s = Solution()
+assert "" == s.longestWord(words=["ab", "abc"])
+assert "abcde" == s.longestWord(words=["a", "ab", "abc", "abcd", "abcde", "wo","wor","worl","world"])
+assert "e" == s.longestWord(words=["ts","e","x","pbhj","opto","xhigy","erikz","pbh","opt","erikzb","eri","erik","xlye","xhig","optoj","optoje","xly","pb","xhi","x","o"])

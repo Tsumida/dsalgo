@@ -1,0 +1,64 @@
+# 2019-9-24
+
+# leetcode 2019 秋季全国编程大赛
+class Solution:
+    def robot(self, command: str, obstacles: list, x: int, y: int) -> bool:
+
+        n = len(command)
+        #print(command, obstacles, x, y)
+        step_u = command.count("U") # 向上多少步
+        step_r = n - step_u
+        #print("N = ", n, "U = ", step_u, "R = ", step_r)
+        # t * (step_r, step_u) + (delta_x, delta_y)
+        # 归约
+
+        t_x, t_y = x, y
+        t = min(x // step_r, y // step_u)
+        x, y = x - t * step_r, y - t * step_u
+
+        #print("归约后： ", x, y, t)
+
+
+        # 创建集合
+        path = [(0, 0)]
+        start_x, start_y = 0, 0
+        for c in command:
+            if c == "U":
+                start_y += 1
+            else: # == R!
+                start_x += 1
+            path.append((start_x, start_y)) # 必定按x递增, y递增排序
+
+        #print("Path = ", path)
+        # 判断(x, y)是否在一个周期上?
+        # 如果不在, false
+        # 如果在， 检查是否存在障碍 o, o_x <= x && o_y <= y 且o归约后在路线上
+        if (x, y) in path:
+            #print("May be true")
+            tmp_obs = [(ox, oy) for ox, oy in obstacles
+                       if ox <= t_x and oy <= t_y]
+            #print("tmp_ops = ", tmp_obs)
+            candidates = list()
+            for ox, oy in tmp_obs:
+                fac = min(ox // step_r, oy // step_u) # 隐含了 fac <= t
+                candidates.append((ox - step_r * fac, oy - step_u * fac))
+            #print("candidates = ", candidates)
+            for tup in candidates:
+                if tup in path:
+                    return False
+            return True
+        else:
+            return False
+
+
+
+
+s = Solution()
+assert True == s.robot(command = "URR", obstacles = [], x = 3, y = 2)
+assert False == s.robot(command = "URR", obstacles = [[2, 2]], x = 3, y = 2)
+assert True == s.robot(command = "URR", obstacles = [[4, 2]], x = 3, y = 2)
+assert False == s.robot(command= "RURR", obstacles=[[2, 1]], x=3, y=2)
+assert False == s.robot(command= "RURR", obstacles=[[2, 1]], x=3, y=2)
+assert False == s.robot(command= "RR"*10 + "U", obstacles=[[0, 8]], x=0, y=7)
+assert True == s.robot(command= "UR", obstacles=[[2, 1]], x=100, y=100) # 归约后回到原点
+

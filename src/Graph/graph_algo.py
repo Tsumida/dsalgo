@@ -34,7 +34,9 @@ class GraphAlgo:
 
         cyclic_flag = False
         for node in nodes:
-            if color[node] == WHITE and not cyclic_flag:
+            if cyclic_flag:
+                break
+            if color[node] == WHITE:
                 dfs(node)
 
         return not cyclic_flag
