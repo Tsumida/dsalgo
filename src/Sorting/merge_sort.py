@@ -29,7 +29,6 @@ def merge(tmp_list: list, target: list, left: int, mid:int, right: int, reverse=
         else:
             tmp_list[k] = target[q]
             q+=1
-
         k += 1
 
     st, end = p, mid

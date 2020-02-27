@@ -1,17 +1,19 @@
 from unittest import TestCase, skipIf
 from random import randint
-
 import time
+import sys
+sys.setrecursionlimit(1 << 12)
 
 from src.Sorting.bubble_sort import bubble_sort
 from src.Sorting.selection_sort import selection_sort
 from src.Sorting.insertion_sort import insertion_sort
 from src.Sorting.merge_sort import merge_sort
+from src.Sorting.quick_sort import quick_sort
 
-SMALL = 64
-LARGE = 1 << 12
-DEBUG = 1
 
+
+SIZE = (1 << 10) - 1
+DEBUG = 0
 
 class TestSorting(TestCase):
     CASES = []
@@ -19,16 +21,16 @@ class TestSorting(TestCase):
 
     def setUp(self):
         print("-"*16, "preparing ...", end="\t")
-        arr1 = [randint(0, 1) % 2 for _ in range(SMALL)]
+        arr1 = [randint(0, 1) % 2 for _ in range(SIZE)]
         arr1_ans = list(sorted(arr1))
         self.CASES.append(
             ("repeated", arr1, arr1_ans),
         )
-        arr2 = [x for x in range(SMALL)]
+        arr2 = [x for x in range(SIZE)]
         self.CASES.append(
             ("sorted", arr2, arr2)
         )
-        arr3 = [randint(0, 100000) for _ in range(SMALL)]
+        arr3 = [randint(0, 100000) for _ in range(SIZE)]
         arr3_ans = list(sorted(arr3))
         self.CASES.append(
             ("random", arr3, arr3_ans)
@@ -36,7 +38,7 @@ class TestSorting(TestCase):
         self.CASES.append(
             ("empty", [], [])
         )
-        arr4 = [randint(0, 1000000007) for _ in range(LARGE)]
+        arr4 = [randint(0, 1000000007) for _ in range(SIZE)]
         arr4_ans = list(sorted(arr4))
         self.CASES.append(
             ("big-size", arr4, arr4_ans)
@@ -100,3 +102,11 @@ class TestSorting(TestCase):
     @skipIf(DEBUG > 0, "")
     def test_merge_sort_descending(self):
         self.sorting_algo(descrip="Merge sort descending", algo=merge_sort, reverse=True)
+
+    @skipIf(DEBUG > 0, "")
+    def test_quick_sort_ascending(self):
+        self.sorting_algo(descrip="Quick sort ascending", algo=quick_sort, reverse=False)
+
+    @skipIf(DEBUG > 0, "")
+    def test_quick_sort_descending(self):
+        self.sorting_algo(descrip="Quick sort descending", algo=quick_sort, reverse=True)
