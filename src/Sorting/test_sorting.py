@@ -11,9 +11,40 @@ from src.Sorting.merge_sort import merge_sort
 from src.Sorting.quick_sort import quick_sort
 
 
-
 SIZE = (1 << 10) - 1
 DEBUG = 0
+BASE = []
+
+def init_base():
+    arr1 = [randint(0, 1) % 2 for _ in range(SIZE)]
+    arr1_ans = list(sorted(arr1))
+    BASE.append(
+        ("repeated", arr1, arr1_ans),
+    )
+    arr2 = [x for x in range(SIZE)]
+    BASE.append(
+        ("sorted", arr2, arr2)
+    )
+    arr3 = [randint(0, 100000) for _ in range(SIZE)]
+    arr3_ans = list(sorted(arr3))
+    BASE.append(
+        ("random", arr3, arr3_ans)
+    )
+    BASE.append(
+        ("empty", [], [])
+    )
+    arr4 = [randint(0, 1000000007) for _ in range(SIZE)]
+    arr4_ans = list(sorted(arr4))
+    BASE.append(
+        ("big-size", arr4, arr4_ans)
+    )
+    arr5 = [1, 0]
+    arr5_ans = [0, 1]
+    BASE.append(
+        ("short", arr5, arr5_ans)
+    )
+
+init_base()
 
 class TestSorting(TestCase):
     CASES = []
@@ -21,33 +52,7 @@ class TestSorting(TestCase):
 
     def setUp(self):
         print("-"*16, "preparing ...", end="\t")
-        arr1 = [randint(0, 1) % 2 for _ in range(SIZE)]
-        arr1_ans = list(sorted(arr1))
-        self.CASES.append(
-            ("repeated", arr1, arr1_ans),
-        )
-        arr2 = [x for x in range(SIZE)]
-        self.CASES.append(
-            ("sorted", arr2, arr2)
-        )
-        arr3 = [randint(0, 100000) for _ in range(SIZE)]
-        arr3_ans = list(sorted(arr3))
-        self.CASES.append(
-            ("random", arr3, arr3_ans)
-        )
-        self.CASES.append(
-            ("empty", [], [])
-        )
-        arr4 = [randint(0, 1000000007) for _ in range(SIZE)]
-        arr4_ans = list(sorted(arr4))
-        self.CASES.append(
-            ("big-size", arr4, arr4_ans)
-        )
-        arr5 = [1, 0]
-        arr5_ans = [0, 1]
-        self.CASES.append(
-            ("short", arr5, arr5_ans)
-        )
+        self.CASES = BASE.copy()
         print("done")
 
     def tearDown(self):
