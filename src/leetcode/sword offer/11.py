@@ -20,12 +20,19 @@ class Solution:
             # 关键是确定什么比较条件，来缩减[left, right]
             left, right = 0, len(arr)-1
             while left < right:
+                # 每个循环都要保证 x in [left, right]
                 mid = (left + right) >>1
                 if arr[mid] == arr[right]:
-                    right -= 1 # 丢弃一个重复值
+                    # 无法确定mid在左边还是右边，
+                    # 但是x in [left, right]成立
+                    right -= 1
                 elif arr[mid] > arr[right]:
+                    # 显然，mid在左边; 那么 mid + 1可能在左边，也可能在右边
+                    # 那么 x 必然在 [mid+1, right]
                     left = mid+1
                 else:
+                    # 显然, mid在右边，那么 x <= mid < right
+                    # 那么 x in [left, mid]
                     right = mid
 
             assert left == right
