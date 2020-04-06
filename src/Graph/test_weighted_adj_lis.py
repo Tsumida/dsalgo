@@ -170,3 +170,39 @@ class TestWeightedAdjLis(TestCase):
 
         for label, case in GRAPH_CASES.items():
             test_edge(label, case)
+
+    def test_transposition(self):
+        def test_trans(src, tar, type):
+            trans = Graph.make(PHY_ADJ_LIS, src)\
+                        .get_storage()\
+                        .transposition()
+            cmp = Graph.make(type, tar)
+            assert cmp.get_storage() == trans
+
+        test_trans(
+            GRAPH_CASES["tree"],
+            [(4, 3, 1), (5, 3, 1), (6, 3, 1), (3, 2, 1), (2, 1, 1)],
+            PHY_ADJ_LIS
+        )
+
+        test_trans(
+            GRAPH_CASES["cyclic"],
+            [(4, 2, 2), (2, 3, 1), (3, 1, 1), (1, 2, 1)],
+            PHY_ADJ_LIS
+        )
+
+        test_trans(
+            GRAPH_CASES["4-complete"],
+            GRAPH_CASES["4-complete"],
+            PHY_ADJ_LIS
+        )
+
+        test_trans(
+            GRAPH_CASES["nil"],
+            GRAPH_CASES["nil"],
+            PHY_ADJ_LIS
+        )
+
+
+
+

@@ -1,7 +1,7 @@
 # 2020-02-03
 
 from src.Graph.weighted_adj_lis import *
-from src.Graph.adj_mat import *
+from src.Graph.adj_mat import AdjMat
 from src.Graph.others import *
 
 class Graph:

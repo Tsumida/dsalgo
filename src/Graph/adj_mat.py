@@ -99,7 +99,7 @@ class AdjMat(GraphStorage):
 
     def get_neighbours(self, node):
         # O(E)
-        # 获得点所有的出边
+        # 获得点所有的出边, 类型是 (node, weight)
         # usage: for v, w in graph.get_neighbours("z city")
         a = self.__node2index.get(node, None)
         if a != None:
@@ -184,3 +184,6 @@ class AdjMat(GraphStorage):
         for u, v, w in edges:
             g.add_edge(u, v, w)
         return g
+
+    def transposition(self):
+        raise GraphException("Unimplemented!")

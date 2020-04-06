@@ -143,3 +143,31 @@ class WeightedAdjLis(GraphStorage):
         for u, v, w in edges:
             g.add_edge(u, v, w)
         return g
+
+    def transposition(self):
+        t = WeightedAdjLis()
+        for u, s in self.__adj.items():
+            # (u, v, w) -> (v, u, w)
+            for edge in s:
+                t.add_edge(edge.v, u, edge.w)
+        return t
+
+    def __eq__(self, other):
+        for u, s in other.__adj.items():
+            for oedge in s:
+                try:
+                    res = self.get_edge(u, oedge.v)
+                    if res == None: return False
+                    _, _, sw = res
+                    if sw != oedge.w: return False
+                except GraphException: return False
+        return True
+
+
+
+
+
+
+
+
+

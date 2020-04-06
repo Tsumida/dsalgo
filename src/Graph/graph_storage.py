@@ -52,6 +52,10 @@ class GraphStorage(ABC):
         pass
 
     def nodes(self):
+        """
+        Return all nodes.
+        :return:
+        """
         pass
 
     def edges(self):
@@ -59,4 +63,7 @@ class GraphStorage(ABC):
 
     @staticmethod
     def make(edges:List[Tuple]):
+        pass
+
+    def transposition(self):
         pass
